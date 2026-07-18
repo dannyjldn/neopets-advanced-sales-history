@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Neopets Advanced Sales History
 // @namespace    https://tampermonkey.net/
-// @version      3.0
-// @description  Better sales history for Neopets
+// @version      3.0.1
+// @description  Advanced sales history for Neopets
 // @author       Danny
 // @match        https://www.neopets.com/market.phtml?type=sales
 // @grant        none
@@ -31,10 +31,22 @@
         rows.shift(); // remove header
 
         //--------------------------------------------------
+        // Styling variables
+        //--------------------------------------------------
+
+        const styling = { 
+            width: "100%",
+            rowBackgroundColor1: "#ffffcc",
+            rowBackgroundColor2: "#ffffe2",
+            headerBackgroundColor: "#dddd77",
+            headerHoverBackgroundColor: "#ecec99"  
+        };
+
+        //--------------------------------------------------
         // Blend with Neopets styling
         //--------------------------------------------------
 
-        table.style.width = "700px";
+        table.style.width = styling.width;
         table.style.maxWidth = "100%";
         table.style.margin = "0 auto";
         table.style.borderCollapse = "separate";
@@ -71,7 +83,7 @@
         const toolbar = document.createElement('div');
 
         toolbar.style.display = 'flex';
-        toolbar.style.width = '700px';
+        toolbar.style.width = styling.width;
         toolbar.style.justifyContent = 'space-between';
         toolbar.style.alignItems = 'center';
         toolbar.style.margin = '40px auto 10px auto';
@@ -197,6 +209,12 @@
 
         }
 
+        function rowBackground(index) {
+            return index % 2 === 0
+                ? styling.rowBackgroundColor1
+                : styling.rowBackgroundColor2;
+        }
+
         //--------------------------------------------------
         // Sorting
         //--------------------------------------------------
@@ -276,7 +294,7 @@
 
         }
 
-                //--------------------------------------------------
+        //--------------------------------------------------
         // Render
         //--------------------------------------------------
 
@@ -304,15 +322,17 @@
                     ['price', 'Price']
                 ]);
 
-                data.forEach(s => {
+                data.forEach((s, index) => {
+
+                    const bg = rowBackground(index);
 
                     const tr = document.createElement('tr');
 
                     tr.innerHTML = `
-                        <td bgcolor="#ffffcc" align="center">${s.date}</td>
-                        <td bgcolor="#ffffcc" align="center">${s.item}</td>
-                        <td bgcolor="#ffffcc" align="center">${s.buyer}</td>
-                        <td bgcolor="#ffffcc" align="center">${format(s.price)}</td>
+                        <td bgcolor="${bg}" align="center">${s.date}</td>
+                        <td bgcolor="${bg}" align="center">${s.item}</td>
+                        <td bgcolor="${bg}" align="center"><a href="https://www.neopets.com/browseshop.phtml?owner=${s.buyer}" target="_blank">${s.buyer}</a></td>
+                        <td bgcolor="${bg}" align="center">${format(s.price)}</td>
                     `;
 
                     tbody.appendChild(tr);
@@ -349,17 +369,18 @@
                     ['total', 'Total']
                 ]);
 
-                grouped.forEach(g => {
+                grouped.forEach((g, index) => {
+                    const bg = rowBackground(index);
 
                     const tr = document.createElement('tr');
 
                     tr.innerHTML = `
-                        <td bgcolor="#ffffcc" align="center">${g.item}</td>
-                        <td bgcolor="#ffffcc" align="center">${g.qty}</td>
-                        <td bgcolor="#ffffcc" align="center">${format(g.lowest)}</td>
-                        <td bgcolor="#ffffcc" align="center">${format(g.average)}</td>
-                        <td bgcolor="#ffffcc" align="center">${format(g.highest)}</td>
-                        <td bgcolor="#ffffcc" align="center">${format(g.total)}</td>
+                        <td bgcolor="${bg}" align="center">${g.item}</td>
+                        <td bgcolor="${bg}" align="center">${g.qty}</td>
+                        <td bgcolor="${bg}" align="center">${format(g.lowest)}</td>
+                        <td bgcolor="${bg}" align="center">${format(g.average)}</td>
+                        <td bgcolor="${bg}" align="center">${format(g.highest)}</td>
+                        <td bgcolor="${bg}" align="center">${format(g.total)}</td>
                     `;
 
                     tbody.appendChild(tr);
@@ -395,7 +416,7 @@
 
                const td = document.createElement('td');
 
-               td.bgColor = '#dddd77';
+               td.bgColor = styling.headerBackgroundColor;
                td.align = 'center';
                td.style.userSelect = 'none';
 
@@ -404,8 +425,8 @@
                    td.style.cursor = 'pointer';
                    td.style.transition = 'background .15s';
 
-                   td.onmouseenter = () => td.bgColor = '#ecec99';
-                   td.onmouseleave = () => td.bgColor = '#dddd77';
+                   td.onmouseenter = () => td.bgColor = styling.headerHoverBackgroundColor;
+                   td.onmouseleave = () => td.bgColor = styling.headerBackgroundColor;
 
                    let icon = ' ⇅';
 
