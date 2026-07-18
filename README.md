@@ -69,6 +69,9 @@ Neopets' sales history is great for checking recent sales, but becomes difficult
 
 This userscript adds quality-of-life improvements while keeping the original page familiar and lightweight.
 
+## Style customisation
+
+If you wish to change the colors of the table, you can edit the values in the `Styling variables` section in the code. 
 
 ## Compatibility
 
